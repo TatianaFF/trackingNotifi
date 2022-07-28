@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/modesFragment">
+
+    <fragment
+        android:id="@+id/modesFragment"
+        android:name="com.example.trackingnotifi.screens.ListOfModes.ModesFragment"
+        android:label="modes_fragment"
+        tools:layout="@layout/modes_fragment" >
+<!--        <action-->
+<!--            android:id="@+id/action_modesFragment_to_createChangeFragment"-->
+<!--            app:destination="@id/createChangeFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_modesFragment_to_notifiFragment"-->
+<!--            app:destination="@id/notifiFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_modesFragment_to_detailFragment"-->
+<!--            app:destination="@id/detailFragment" />-->
+    </fragment>
+    <fragment
+        android:id="@+id/createChangeFragment"
+        android:name="com.example.trackingnotifi.screens.CreateChangeMode.CreateChangeFragment"
+        android:label="create_change_fragment"
+        tools:layout="@layout/create_change_fragment" >
+<!--        <action-->
+<!--            android:id="@+id/action_createChangeFragment_to_modesFragment"-->
+<!--            app:destination="@id/modesFragment" />-->
+    </fragment>
+    <fragment
+        android:id="@+id/notifiFragment"
+        android:name="com.example.trackingnotifi.screens.ListOfNotifi.NotifiFragment"
+        android:label="notifi_fragment"
+        tools:layout="@layout/notifi_fragment" >
+<!--        <action-->
+<!--            android:id="@+id/action_notifiFragment_to_modesFragment"-->
+<!--            app:destination="@id/modesFragment" />-->
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.trackingnotifi.screens.DetailFragment.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+<!--        <action-->
+<!--            android:id="@+id/action_detailFragment_to_modesFragment"-->
+<!--            app:destination="@id/modesFragment" />-->
+    </fragment>
+</navigation>

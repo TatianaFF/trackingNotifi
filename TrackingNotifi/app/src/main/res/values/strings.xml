@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">TrackingNotifi</string>
+    <string name="notifi">Notifi</string>
+    <string name="modes">Modes</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="name_app">NameApp</string>
+    <string name="name_mode">NameMode</string>
+    <string name="save">Save</string>
+    <string name="title_mode">title mode</string>
+    <string name="addmode">AddMode</string>
+    <string name="nameapp">NameApp</string>
+    <string name="delete">Delete</string>
+    <string name="names_apps">Names apps</string>
+    <string name="title_mode_detail">Title mode</string>
+    <string name="detailmode">DetailMode</string>
+    <string name="name_appCreate">name app</string>
+    <string name="searchCreate">Search</string>
+    <string name="create">Create</string>
+</resources>

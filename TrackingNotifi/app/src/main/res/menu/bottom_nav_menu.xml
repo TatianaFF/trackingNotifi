@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item
+            android:id="@+id/navigation_modes"
+            android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+            android:title="@string/modes"/>
+
+        <item
+            android:id="@+id/navigation_notifi"
+            android:icon="@drawable/ic_baseline_notifications_24"
+            android:title="Blocked notifi"/>
+
+        <item
+            android:id="@+id/navigation_create"
+            android:icon="@drawable/ic_baseline_add_24"
+            android:title="Create mode"/>
+
+</menu>
