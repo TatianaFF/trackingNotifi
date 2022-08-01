@@ -21,10 +21,13 @@ import kotlinx.android.synthetic.main.item_mode_layout.view.*
 import android.app.Activity
 import android.content.Context
 import java.lang.ClassCastException
+import java.util.ArrayList
 
 
 class ModeAdapter() : RecyclerView.Adapter<ModeAdapter.ModeViewHolder>() {
     var listModes = emptyList<ModeModel>()
+//    val listStatus = ArrayList<Boolean>()
+//    val isChecked = false
 
     var onItemClick: ((ModeModel) -> (Unit))? = null
 
@@ -43,23 +46,21 @@ class ModeAdapter() : RecyclerView.Adapter<ModeAdapter.ModeViewHolder>() {
         val switch = holder.itemView.switch1
         val modeCurrent = listModes[position]
 
+//        for (itemStatus in listStatus) Log.e("ModeAdaper", itemStatus.toString())
+
         holder.itemView.name_mode.text = modeCurrent.title
 
         switch.isChecked = modeCurrent.status
         switch.setTag(position)
-
         switch.setOnClickListener(View.OnClickListener { v ->
             val currentPos = v.tag as Int
             val curMode = listModes.get(currentPos)
             var isChecked = false
-            //если не отмечен, отметить
             if (!curMode.status) {
                 isChecked = true
             }
             curMode.status = isChecked
-            //*************
             onItemClick?.invoke(curMode)
-            //*************
         })
     }
 

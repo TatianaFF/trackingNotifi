@@ -27,6 +27,7 @@ class DetailFragment : Fragment() {         //, CoroutineScope
     lateinit var recyclerView: RecyclerView
     lateinit var etTitleModeDetail: EditText
     lateinit var adapter: AppAdapter
+    var allModesObs = ArrayList<ModeModel>()
 
 
     override fun onCreateView(
@@ -47,21 +48,31 @@ class DetailFragment : Fragment() {         //, CoroutineScope
     private fun init() {
         val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
         val listPacksAppsByTitleMode = mutableListOf<String>()
+        val listNameMode = ArrayList<String>()
+
         viewModel.initDatabase()
+
+        viewModel.getAllModes().observe(viewLifecycleOwner) { listModes ->
+            allModesObs = listModes as ArrayList<ModeModel>
+            for (itemMode in listModes){
+                Log.e("DF_", itemMode.title)
+                listNameMode.add(itemMode.title)
+            }
+        }
 
         recyclerView = binding.rvAppsDetail
         adapter = AppAdapter()
         recyclerView.adapter = adapter
 
         //packs app by title mode
-        viewModel.getAppsByTitleMode(currentMode.title).observe(viewLifecycleOwner,{listPackageAppByTitleMode ->
+        viewModel.getAppsByTitleMode(currentMode.title).observe(viewLifecycleOwner) { listPackageAppByTitleMode ->
             for (itemPackApp in listPackageAppByTitleMode) {
                 listPacksAppsByTitleMode.add(itemPackApp.pack)
                 Log.e("PackApp: ", itemPackApp.pack)
             }
 //            Log.e("AppPack: ", listAppsByTitleMode.size.toString())
 //            for (itemPackApp in listAppsByTitleMode) Log.e("AppPack: ", itemPackApp.pack)
-        })
+        }
 
         adapter.setList(viewModel.getInstaledApps())
         adapter.setListPack(listPacksAppsByTitleMode)
@@ -77,9 +88,9 @@ class DetailFragment : Fragment() {         //, CoroutineScope
 
             for (itemApp in listAppsByTitleMode) viewModel.deleteApp(itemApp)
 
-            viewModel.getAllModeAppByTitleMode(currentMode.title).observe(viewLifecycleOwner, {listAllModeApp ->
+            viewModel.getAllModeAppByTitleMode(currentMode.title).observe(viewLifecycleOwner) { listAllModeApp ->
                 for (itemModeApp in listAllModeApp) viewModel.deleteModeApp(itemModeApp)
-            })
+            }
 
             APP.navController.navigate(R.id.modesFragment)
         }
@@ -111,42 +122,52 @@ class DetailFragment : Fragment() {         //, CoroutineScope
         }
 
         binding.btnUpdateDetail.setOnClickListener{
+            val titleMode = binding.etTitleModeDetail.text.toString()
+
+//            for (itemMode in allModesObs){
+//                Log.e("DF_", itemMode.title)
+//                if (!itemMode.title.equals(titleMode)) listNameMode.add(itemMode.title)
+//            }
             //написать нормальное обновление таблиц БД
-
-            viewModel.getAllModeAppByTitleMode(currentMode.title).observe(viewLifecycleOwner, {listAllModeApp ->
-                for (itemModeApp in listAllModeApp) viewModel.deleteModeApp(itemModeApp)
-            })
-            viewModel.getAppsByTitleMode(currentMode.title).observe(viewLifecycleOwner, {listAllApps ->
-                for (itemApp in listAllApps) viewModel.deleteApp(itemApp)
-            })
-
-            viewModel.deleteMode(currentMode)
-
             //создание объектов
             //ADD MODE IN DB
-            val titleMode = binding.etTitleModeDetail.text.toString()
-            //сделать проверку на уникальность имени
-            viewModel.insertMode(ModeModel(title = titleMode))
-            //
-
-            //ADD APPS IN DB
-            //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
-            val listAppInstaledAdapter = adapter.getList()
-
-            //формирование списка id приложений для сохранения в БД
-            for (itemApp in listAppInstaledAdapter){
-                if (itemApp.ischecked){
-                    val pack = itemApp.pack
-                    //проверку на существование записи в БД по title
-                    //ADD APP
-                    viewModel.insertApp(AppModel(pack = pack))
-
-                    //ADD MODE_APP IN DB
-                    viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+            //не измененное имя
+            var countEquals = 0
+            for (itemNameMode in listNameMode) if (itemNameMode == titleMode) countEquals++
+            Log.e("countEquals", countEquals.toString())
+            Log.e("currentMode", currentMode.title)
+            if (!listNameMode.contains(titleMode) || titleMode == currentMode.title){
+                Log.e("contains", "no")
+                viewModel.getAllModeAppByTitleMode(currentMode.title).observe(viewLifecycleOwner) { listAllModeApp ->
+                    for (itemModeApp in listAllModeApp) viewModel.deleteModeApp(itemModeApp)
                 }
-            }
+                viewModel.getAppsByTitleMode(currentMode.title).observe(viewLifecycleOwner) { listAllApps ->
+                    for (itemApp in listAllApps) viewModel.deleteApp(itemApp)
+                }
 
-            APP.navController.navigate(R.id.modesFragment)
+                viewModel.deleteMode(currentMode)
+
+                viewModel.insertMode(ModeModel(title = titleMode))
+                //
+
+                //ADD APPS IN DB
+                //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
+                val listAppInstaledAdapter = adapter.getList()
+
+                //формирование списка id приложений для сохранения в БД
+                for (itemApp in listAppInstaledAdapter){
+                    if (itemApp.ischecked){
+                        val pack = itemApp.pack
+                        //проверку на существование записи в БД по title
+                        //ADD APP
+                        viewModel.insertApp(AppModel(pack = pack))
+
+                        //ADD MODE_APP IN DB
+                        viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+                    }
+                }
+                APP.navController.navigate(R.id.modesFragment)
+            } else Toast.makeText(context, "Такое название режима уже существует", Toast.LENGTH_SHORT).show()
         }
     }
 }

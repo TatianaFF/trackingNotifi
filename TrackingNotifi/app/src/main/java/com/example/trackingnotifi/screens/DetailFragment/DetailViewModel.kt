@@ -52,6 +52,10 @@ class DetailViewModel(application: Application): AndroidViewModel(application) {
         return REPOSITORY.getAllModeAppByTitleMode(titleMode)
     }
 
+    fun getAllModes(): LiveData<List<ModeModel>> {
+        return REPOSITORY.allModes
+    }
+
     @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
     fun getInstaledApps(): List<AppInstaledModel> {
         val pm: PackageManager = context.packageManager

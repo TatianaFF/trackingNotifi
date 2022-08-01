@@ -54,13 +54,9 @@ class CreateChangeViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-//    fun getIdByTitleMode(nameMode: String): LiveData<Long> {
-//        return REPOSITORY.getIdByTitleMode(nameMode)
-//    }
-
-//    fun getIdByPackageApp (packApp: String): LiveData<Long> {
-//        return REPOSITORY.getIdByPackageApp(packApp)
-//    }
+    fun getAllModes(): LiveData<List<ModeModel>> {
+        return REPOSITORY.allModes
+    }
 
     @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
     fun getInstaledApps(): List<AppInstaledModel> {

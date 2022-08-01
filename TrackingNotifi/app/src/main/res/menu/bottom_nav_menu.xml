@@ -12,8 +12,8 @@
             android:title="Blocked notifi"/>
 
         <item
-            android:id="@+id/navigation_create"
-            android:icon="@drawable/ic_baseline_add_24"
-            android:title="Create mode"/>
+            android:id="@+id/navigation_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="Settings"/>
 
 </menu>

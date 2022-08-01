@@ -23,12 +23,15 @@ class CreateChangeFragment : Fragment() {
     lateinit var binding: CreateChangeFragmentBinding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: AppAdapter
+    var allModesObs = ArrayList<ModeModel>()
+    var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = CreateChangeFragmentBinding.inflate(layoutInflater, container, false)
+        listAppInstaled = arguments?.getSerializable("apps") as ArrayList<AppInstaledModel>
         return binding.root
     }
 
@@ -40,15 +43,20 @@ class CreateChangeFragment : Fragment() {
     private fun init(){
         val viewModel = ViewModelProvider(this).get(CreateChangeViewModel::class.java)
         var listAppInstaledAdapter: List<AppInstaledModel>
-//        val listPackApps = mutableListOf<String>()
-
+        val listNameMode = ArrayList<String>()
         viewModel.initDatabase()
+
+        viewModel.getAllModes().observe(viewLifecycleOwner) { listModes ->
+            allModesObs = listModes as ArrayList<ModeModel>
+            for (itemMode in allModesObs) listNameMode.add(itemMode.title)
+        }
+
 
         recyclerView = binding.rvAppsCreate
         adapter = AppAdapter()
         recyclerView.adapter = adapter
 
-        adapter.setList(viewModel.getInstaledApps())
+        adapter.setList(listAppInstaled)   //viewModel.getInstaledApps()
 //        adapter.setList(viewModel.getInstaledApps())
 //        adapter.setListPack(listPackApps)
         //костыль, без прокрутки не выделяет checkbox (значения ischecked с list) у первых элементов
@@ -56,31 +64,30 @@ class CreateChangeFragment : Fragment() {
 
         //слушатель на кнопку сохр
         binding.btnSaveCreate.setOnClickListener{
-
             //ADD MODE IN DB
             val titleMode = binding.etTitleModeCreate.text.toString()
-            //сделать проверку на уникальность имени
-            viewModel.insertMode(ModeModel(title = titleMode))
-            //
+            //проверка на уникальность имени
+            if (!listNameMode.contains(titleMode)){
+                viewModel.insertMode(ModeModel(title = titleMode))
 
-            //ADD APPS IN DB
-            //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
-            listAppInstaledAdapter = adapter.getList()
+                //ADD APPS IN DB
+                //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
+                listAppInstaledAdapter = adapter.getList()
 
-            //формирование списка id приложений для сохранения в БД
-            for (itemApp in listAppInstaledAdapter){
-                if (itemApp.ischecked){
-                    val pack = itemApp.pack
-                    //проверку на существование записи в БД по title
-                    //ADD APP
-                    viewModel.insertApp(AppModel(pack = pack))
+                //формирование списка id приложений для сохранения в БД
+                for (itemApp in listAppInstaledAdapter){
+                    if (itemApp.ischecked){
+                        val pack = itemApp.pack
+                        //проверку на существование записи в БД по title
+                        //ADD APP
+                        viewModel.insertApp(AppModel(pack = pack))
 
-                    //ADD MODE_APP IN DB
-                    viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+                        //ADD MODE_APP IN DB
+                        viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+                    }
                 }
-            }
-
-            APP.navController.navigate(R.id.modesFragment)
+                APP.navController.navigate(R.id.modesFragment)
+            } else Toast.makeText(context, "Такое название режима уже существует", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnSearchCreate.setOnClickListener{
