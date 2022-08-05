@@ -6,20 +6,24 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity(tableName = "notifi_table", foreignKeys = arrayOf(
-    ForeignKey(
-        entity = AppModel::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("id_app"),
-        onDelete = ForeignKey.NO_ACTION
-    )
-))
+//@Entity(tableName = "notifi_table", foreignKeys = arrayOf(
+//    ForeignKey(
+//        entity = AppModel::class,
+//        parentColumns = arrayOf("id"),
+//        childColumns = arrayOf("id_app"),
+//        onDelete = ForeignKey.NO_ACTION
+//    )
+//))
+@Entity(tableName = "notifi_table")
 class NotifiModel(
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
+    var id: Long = 0,
+
+//    @ColumnInfo
+//    var id_app: Int = 0,
 
     @ColumnInfo
-    var id_app: Int = 0,
+    var pack: String = "",
 
     @ColumnInfo
     var from: String = "",

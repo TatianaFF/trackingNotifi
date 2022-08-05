@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.Mode_AppModel
+import com.example.trackingnotifi.models.NotifiModel
 
 interface IRepository {
 
@@ -27,6 +28,12 @@ interface IRepository {
     suspend fun insertModeApp(modeAppModel: Mode_AppModel)
     suspend fun deleteModeApp(modeAppModel: Mode_AppModel)
     fun getAllModeAppByTitleMode(titleMode: String): LiveData<List<Mode_AppModel>>
+
+    //NotifiModel
+
+    val allNotifi: LiveData<List<NotifiModel>>
+    suspend fun insertNotifi(notifi: NotifiModel)
+    suspend fun deleteNotifi(notifi: NotifiModel)
 }
 
 

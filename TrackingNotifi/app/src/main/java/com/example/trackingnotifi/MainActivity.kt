@@ -1,14 +1,12 @@
 package com.example.trackingnotifi
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
@@ -23,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.trackingnotifi.models.AppInstaledModel
+import com.example.trackingnotifi.service.NLService
 import java.lang.Exception
 import java.util.ArrayList
 
@@ -31,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
     val context = application
 //    var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
+
 
 
     //Экран создается с помощью биндингов
@@ -48,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         APP = this
         navController = Navigation.findNavController(this, R.id.nav_fragment)
+
+//        Log.e("NOTIFIFR_count_allNotifi", mService.getNotifi.count().toString())
+
 
 //        val bundle = Bundle()
 //        listAppInstaled = getInstaledApps() as ArrayList<AppInstaledModel>
@@ -89,13 +92,4 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-//    class modesFrReceiver : BroadcastReceiver(){
-//        @Override
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            val postIntent = intent?.getStringExtra("notification_event")
-//            Log.e("PACKPOSTED_modesFr", postIntent.toString())\
-//
-//        }
-//
-//    }
 }

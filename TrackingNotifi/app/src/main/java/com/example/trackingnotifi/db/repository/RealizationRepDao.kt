@@ -5,6 +5,7 @@ import com.example.trackingnotifi.db.dao.IDao
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.Mode_AppModel
+import com.example.trackingnotifi.models.NotifiModel
 
 // репозиторий IModeRepository нужен для имплементации всех его методов,
 // Dao описывает(реализует) что нужно делать БД при вызове методов
@@ -60,6 +61,19 @@ class RealizationRepDao(private val iDao:IDao): IRepository {
 
     override fun getAllModeAppByTitleMode(titleMode: String): LiveData<List<Mode_AppModel>> {
         return iDao.getAllModeAppByTitleMode(titleMode)
+    }
+
+    //NotifiModel
+
+    override val allNotifi: LiveData<List<NotifiModel>>
+        get() = iDao.getAllNotifi()
+
+    override suspend fun insertNotifi(notifi: NotifiModel) {
+        iDao.insertNotifi(notifi)
+    }
+
+    override suspend fun deleteNotifi(notifi: NotifiModel) {
+        iDao.deleteNotifi(notifi)
     }
 
 }

@@ -8,8 +8,9 @@ import com.example.trackingnotifi.db.dao.IDao
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.Mode_AppModel
+import com.example.trackingnotifi.models.NotifiModel
 
-@Database(entities = [ModeModel::class, AppModel::class, Mode_AppModel::class], version = 1)
+@Database(entities = [ModeModel::class, AppModel::class, Mode_AppModel::class, NotifiModel::class], version = 1)
 abstract class ModeDatabase: RoomDatabase() {
     abstract fun getNoteDao(): IDao
 

@@ -115,11 +115,4 @@ class CreateChangeFragment : Fragment() {
         }
     }
 
-    companion object{
-        //cb
-        fun clickApp(appModel: AppModel){
-
-        }
-    }
-
 }

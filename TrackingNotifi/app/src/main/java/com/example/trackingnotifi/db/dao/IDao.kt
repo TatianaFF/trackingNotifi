@@ -5,6 +5,7 @@ import androidx.room.*
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.Mode_AppModel
+import com.example.trackingnotifi.models.NotifiModel
 
 @Dao
 interface IDao {
@@ -51,4 +52,14 @@ interface IDao {
     @Query("select * from mode_app_table where mode_app_table.title_mode = :titleMode")
     fun getAllModeAppByTitleMode(titleMode: String): LiveData<List<Mode_AppModel>>
 
+    //Notifi
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNotifi(notifi: NotifiModel)
+
+    @Delete
+    suspend fun deleteNotifi(notifi: NotifiModel)
+
+    @Query("select * from notifi_table")
+    fun getAllNotifi(): LiveData<List<NotifiModel>>
 }

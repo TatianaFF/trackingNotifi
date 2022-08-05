@@ -1,13 +1,18 @@
 package com.example.trackingnotifi.screens.ListOfModes
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.APP
 import com.example.trackingnotifi.R
@@ -86,7 +91,8 @@ class ModesFragment() : Fragment() {
                 Log.e("MFD_count_block", packAppsOnBlock.count().toString())
                 intent1.putExtra("stop_MF", "STOP")
                 //отсюда метод onStop не вызываестя
-                context?.sendBroadcast(intent1)
+//                context?.sendBroadcast(intent1)
+                LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent1)
             }
             viewModel.updateMode(mode)
             for (itemMode in allModesObs) Log.e("MF_status", itemMode.status.toString())
