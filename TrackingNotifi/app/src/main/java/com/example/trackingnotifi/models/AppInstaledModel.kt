@@ -1,6 +1,7 @@
 package com.example.trackingnotifi.models
 
 import android.graphics.drawable.Drawable
+import java.io.Serializable
 
 
 class AppInstaledModel(
@@ -13,4 +14,4 @@ class AppInstaledModel(
     var icon: Drawable,
 
     var ischecked: Boolean = false
-)
+) : Serializable

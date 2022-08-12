@@ -39,6 +39,7 @@ class NotifiFragment : Fragment() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
             Log.e("push_notifi", "")
             //************//
+            //почему getStringArrayListExtra работает непонятно
             val servIntent = intent?.getStringArrayListExtra("push_notifi") as? ArrayList<NotifiModelList>
 
             if (servIntent != null) {
@@ -84,21 +85,6 @@ class NotifiFragment : Fragment() {
         super.onDestroy()
 
         LocalBroadcastManager.getInstance(activity!!.applicationContext).unregisterReceiver(valBroadcastReceiver)
-    }
-
-    companion object{
-        fun clickNotifi(notifi: NotifiModelList){
-//            val packageManager: PackageManager =
-//            val pm: PackageManager =  packageManager
-//            val bundle = Bundle()
-//            bundle.putSerializable("notifi", notifi)
-////            APP.navController.navigate(R.id.detailFragment, bundle)
-//            val launchIntent: Intent =
-//                getPackageManager().getLaunchIntentForPackage(notifi.pack)
-//            if (launchIntent != null) {
-//                startActivity(launchIntent) //null pointer check in case package name was not found
-//            }
-        }
     }
 
 }

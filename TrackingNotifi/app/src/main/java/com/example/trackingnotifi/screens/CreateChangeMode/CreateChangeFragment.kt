@@ -1,13 +1,13 @@
 package com.example.trackingnotifi.screens.CreateChangeMode
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.APP
 import com.example.trackingnotifi.R
@@ -25,6 +25,7 @@ class CreateChangeFragment : Fragment() {
     lateinit var adapter: AppAdapter
     var allModesObs = ArrayList<ModeModel>()
     var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
+    var modeId: Long = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +33,11 @@ class CreateChangeFragment : Fragment() {
     ): View? {
         binding = CreateChangeFragmentBinding.inflate(layoutInflater, container, false)
         listAppInstaled = arguments?.getSerializable("apps") as ArrayList<AppInstaledModel>
+
+        //ловим id из StartActivity
+//        val extras: Bundle = getIntent().getExtras()
+//        modeId = extras.getInt("id").toLong()
+//        Log.e("id_mode", modeId.toString())
         return binding.root
     }
 

@@ -50,6 +50,7 @@ class ModesFragment() : Fragment() {
     }
 
     private fun init(){
+
         val viewModel = ViewModelProvider(this).get(ModesViewModel::class.java)
         viewModel.initDatabase()
         recyclerView = binding.rvModes
@@ -81,27 +82,25 @@ class ModesFragment() : Fragment() {
                     )
                     intent.putStringArrayListExtra("onStartCommand", packAppsOnBlock)
                     Log.e("MFS_count_block", packAppsOnBlock.count().toString())
-                    //мб лучше отправить в сервис
-                    context?.startService(intent)
+                    context?.startForegroundService(intent)
                 }
-
             }else if (!mode.status){
                 //отправить интент на блокировку в сервис
                 val intent1 = Intent(BROADCAST_NAME_ACTION)
-                Log.e("MFD_count_block", packAppsOnBlock.count().toString())
                 intent1.putExtra("stop_MF", "STOP")
                 //отсюда метод onStop не вызываестя
 //                context?.sendBroadcast(intent1)
                 LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent1)
             }
             viewModel.updateMode(mode)
-            for (itemMode in allModesObs) Log.e("MF_status", itemMode.status.toString())
+//            for (itemMode in allModesObs) Log.e("MF_status", itemMode.status.toString())
         }
+//        listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
         floatingButton = binding.floatingActionButton
         floatingButton.setOnClickListener{
             var timeout = System.currentTimeMillis()
-            val bundle = Bundle()
             listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
+            val bundle = Bundle()
             bundle.putSerializable("apps", listAppInstaled)
             APP.navController.navigate(R.id.createChangeFragment, bundle)
             timeout = System.currentTimeMillis() - timeout

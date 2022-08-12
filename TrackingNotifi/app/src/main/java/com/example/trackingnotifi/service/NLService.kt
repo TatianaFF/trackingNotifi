@@ -2,14 +2,24 @@ package com.example.trackingnotifi.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.trackingnotifi.MainActivity
+import com.example.trackingnotifi.R
 import com.example.trackingnotifi.models.NotifiModelList
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -22,6 +32,7 @@ class NLService : NotificationListenerService() {
     var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
     val packApps = ArrayList<String>()
     val notifiList = ArrayList<NotifiModelList>()
+    private val CHANNEL_ID = "ForegroundService"
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         Log.i(TAG, "onNotificationPosted")
@@ -54,7 +65,11 @@ class NLService : NotificationListenerService() {
             val stopIntent = intent.getStringExtra("stop_MF")
             if (stopIntent!=null) {
                 Log.e("STOP_S", stopIntent.toString())
-                stopService(Intent(context, NLService::class.java))
+//                stopService(Intent(context, NLService::class.java))
+//                stopSelf()
+                stopForeground(true)
+                packApps.clear()
+                notifiList.clear()
             }
 
             val getNotifi = intent.getStringExtra("getNotifi")
@@ -101,27 +116,52 @@ class NLService : NotificationListenerService() {
             Log.e("pack", itemPack)
             Log.e("packApps", packApps.count().toString())
         }
+//        startForegroundService(intent)
 
+        createNotificationChannel()
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0, notificationIntent, 0
+        )
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Foreground Service")
+            .setContentText("Application blocking service")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentIntent(pendingIntent)
+            .build()
+        startForeground(1, notification)
+        //stopSelf()
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun startForegroundService(service: Intent?): ComponentName? {
+        Log.e("start", "FORservice")
+
+
+        return super.startForegroundService(service)
     }
 
     @Override
     override fun stopService(name: Intent?): Boolean {
-        Toast.makeText(this, "stop service", Toast.LENGTH_SHORT).show()
         Log.e("stop", "service")
-        //очистить packApps
-        val i = Intent(BROADCAST_NAME_ACTION)
-        i.putExtra("service", notifiList.count())
-        sendBroadcast(i)
+
         return super.stopService(name)
     }
 
-
     @Override
     override fun onDestroy() {
-        Toast.makeText(this, "disabled service", Toast.LENGTH_SHORT).show()
         Log.e("service ", "disabled")
         LocalBroadcastManager.getInstance(this).unregisterReceiver(NLServiceReceiver)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(CHANNEL_ID, "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT)
+            val manager = getSystemService(NotificationManager::class.java)
+            manager!!.createNotificationChannel(serviceChannel)
+        }
     }
 
 }
