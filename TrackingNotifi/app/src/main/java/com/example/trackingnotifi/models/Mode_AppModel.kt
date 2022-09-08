@@ -22,7 +22,7 @@ import java.io.Serializable
 //    )
 //)
 )
-class Mode_AppModel (
+data class Mode_AppModel (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
 

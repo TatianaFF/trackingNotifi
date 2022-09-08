@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.util.Log
 import android.view.Display
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -74,7 +75,8 @@ class DetailViewModel(application: Application): AndroidViewModel(application) {
                     counter,
                     pm.getApplicationLabel(applicationInfo) as String,
                     item.packageName,
-                    pm.getApplicationIcon(applicationInfo)
+//                    pm.getApplicationIcon(applicationInfo)
+                            pm.getApplicationIcon(applicationInfo)
                 )
                 )
             }

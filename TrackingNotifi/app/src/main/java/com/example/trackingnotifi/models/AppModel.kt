@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "app_table")
-class AppModel (
+data class AppModel (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
 

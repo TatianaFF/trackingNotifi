@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import androidx.core.app.NotificationCompat
 import java.io.Serializable
 
-class NotifiModelList(
+data class NotifiModelList(
     var id: Long = 0,
     var name_app: String = "",
     var icon: Drawable,

@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="from"
+            android:text="@string/from"
             android:textColor="@color/black"
             android:textSize="15sp"/>
 
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="message"
+            android:text="@string/message"
             android:textColor="@color/black"
             android:textSize="15sp"/>
 
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="date"
+            android:text="@string/date"
             android:textColor="@color/black"
             android:textSize="15sp"/>
 

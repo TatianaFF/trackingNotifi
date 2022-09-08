@@ -88,25 +88,3 @@ class NotifiFragment : Fragment() {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

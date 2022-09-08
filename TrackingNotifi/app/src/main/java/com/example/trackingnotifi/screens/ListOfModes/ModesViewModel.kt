@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.util.Log
 import android.view.Display
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -43,33 +44,33 @@ class ModesViewModel(application: Application) : AndroidViewModel(application) {
             REPOSITORY.updateMode(modeModel)
         }
 
-    @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
-    fun getInstaledApps(): List<AppInstaledModel> {
-        val pm: PackageManager = context.packageManager
-        val listPMInfo: MutableList<ApplicationInfo> = pm.getInstalledApplications(PackageManager.GET_META_DATA)         //GET_META_DATA сравнить
-        var applicationInfo: ApplicationInfo
-        val listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
-        var counter: Long = 0
-
-        for(item in listPMInfo){
-            try {
-                applicationInfo = pm.getApplicationInfo(item.packageName, 1)
-
-                //create AppInstaledModel, НЕ сохранение в БД
-                listAppInstaled.add(
-                    AppInstaledModel(
-                    counter,
-                    pm.getApplicationLabel(applicationInfo) as String,
-                    item.packageName,
-                    pm.getApplicationIcon(applicationInfo)
-                )
-                )
-            }
-            catch (e: Exception){
-                e.message?.let { Log.e("Error getApps: ", it) }
-            }
-            counter++
-        }
-        return listAppInstaled
-    }
+//    @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
+//     fun getInstaledApps(): MutableList<AppInstaledModel> {
+//        val pm: PackageManager = context.packageManager
+//        val listPMInfo: MutableList<ApplicationInfo> = pm.getInstalledApplications(PackageManager.GET_META_DATA)         //GET_META_DATA сравнить
+//        var applicationInfo: ApplicationInfo
+//        val listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
+//        var counter: Long = 0
+//
+//        for(item in listPMInfo){
+//            try {
+//                applicationInfo = pm.getApplicationInfo(item.packageName, 1)
+//
+//                //create AppInstaledModel, НЕ сохранение в БД
+//                listAppInstaled.add(
+//                    AppInstaledModel(
+//                    counter,
+//                    pm.getApplicationLabel(applicationInfo) as String,
+//                    item.packageName,
+//                        pm.getApplicationIcon(applicationInfo)
+//                )
+//                )
+//            }
+//            catch (e: Exception){
+//                e.message?.let { Log.e("Error getApps: ", it) }
+//            }
+//            counter++
+//        }
+//        return listAppInstaled
+//    }
 }

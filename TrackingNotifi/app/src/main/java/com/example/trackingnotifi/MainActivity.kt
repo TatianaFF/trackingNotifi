@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun isNotificationServiceEnabled(c: Context): Boolean {
         val pkgName = c.packageName
         val flat = Settings.Secure.getString(

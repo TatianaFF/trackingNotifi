@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
+//    id 'kotlin-parcelize'
 }
 
 android {
@@ -76,4 +77,6 @@ dependencies {
 
     // Paging 3.0
     implementation 'androidx.paging:paging-compose:1.0.0-alpha15'
+
+//    implementation 'com.google.code.gson:gson:2.9.1'
 }

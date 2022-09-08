@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "mode_table")
-class ModeModel (
+data class ModeModel (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
 

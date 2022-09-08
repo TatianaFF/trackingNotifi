@@ -15,7 +15,7 @@ import java.io.Serializable
 //    )
 //))
 @Entity(tableName = "notifi_table")
-class NotifiModel(
+data class NotifiModel(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
 

@@ -1,6 +1,9 @@
 package com.example.trackingnotifi.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +41,10 @@ class AppAdapter: RecyclerView.Adapter<AppAdapter.AppViewHolder>(
         //установить флажок на cb
         checkbox.setChecked(appCurrent.ischecked)
         name_app.text = appCurrent.title
+
         app_icon.setImageDrawable(appCurrent.icon)
+//        app_icon.setImageDrawable(appCurrent.icon)
+
 
         // Tag is important to get position clicked checkbox
         checkbox.setTag(position)

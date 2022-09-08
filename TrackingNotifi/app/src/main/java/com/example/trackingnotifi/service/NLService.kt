@@ -131,6 +131,7 @@ class NLService : NotificationListenerService() {
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)
+        startForegroundService(notificationIntent)
         //stopSelf()
         return super.onStartCommand(intent, flags, startId)
     }

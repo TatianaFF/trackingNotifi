@@ -16,7 +16,11 @@ import kotlinx.coroutines.launch
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_META_DATA
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.example.trackingnotifi.models.AppInstaledModel
@@ -59,9 +63,9 @@ class CreateChangeViewModel(application: Application) : AndroidViewModel(applica
     }
 
     @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
-    fun getInstaledApps(): List<AppInstaledModel> {
+    fun getInstaledApps(): MutableList<AppInstaledModel> {
         val pm: PackageManager = context.packageManager
-        val listPMInfo: MutableList<ApplicationInfo> = pm.getInstalledApplications(GET_META_DATA)         //GET_META_DATA сравнить
+        val listPMInfo: MutableList<ApplicationInfo> = pm.getInstalledApplications(PackageManager.GET_META_DATA)
         var applicationInfo: ApplicationInfo
         val listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
         var counter: Long = 0
@@ -71,12 +75,14 @@ class CreateChangeViewModel(application: Application) : AndroidViewModel(applica
                 applicationInfo = pm.getApplicationInfo(item.packageName, 1)
 
                 //create AppInstaledModel, НЕ сохранение в БД
-                listAppInstaled.add(AppInstaledModel(
-                    counter,
-                    pm.getApplicationLabel(applicationInfo) as String,
-                    item.packageName,
-                    pm.getApplicationIcon(applicationInfo)
-                ))
+                listAppInstaled.add(
+                    AppInstaledModel(
+                        counter,
+                        pm.getApplicationLabel(applicationInfo) as String,
+                        item.packageName,
+                        pm.getApplicationIcon(applicationInfo)
+                    )
+                )
             }
             catch (e: Exception){
                 e.message?.let { Log.e("Error getApps: ", it) }

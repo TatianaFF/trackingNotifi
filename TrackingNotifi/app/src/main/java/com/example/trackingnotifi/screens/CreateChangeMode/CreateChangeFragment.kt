@@ -5,8 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.compose.ui.graphics.GraphicsLayerScope
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.APP
@@ -23,21 +27,22 @@ class CreateChangeFragment : Fragment() {
     lateinit var binding: CreateChangeFragmentBinding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: AppAdapter
-    var allModesObs = ArrayList<ModeModel>()
-    var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
-    var modeId: Long = -1
+//    var allModesObs = ArrayList<ModeModel>()
+    lateinit var listAppInstaled: ArrayList<AppInstaledModel>
+    val TAG_APPS = "apps"
+    var resultReq:String? = ""
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = CreateChangeFragmentBinding.inflate(layoutInflater, container, false)
-        listAppInstaled = arguments?.getSerializable("apps") as ArrayList<AppInstaledModel>
+//        listAppInstaled = arguments?.getSerializable(TAG_APPS) as ArrayList<AppInstaledModel>
+//        listAppInstaled = arguments?.getParcelableArrayList<AppInstaledModel>("List") as ArrayList<AppInstaledModel>
 
-        //ловим id из StartActivity
-//        val extras: Bundle = getIntent().getExtras()
-//        modeId = extras.getInt("id").toLong()
-//        Log.e("id_mode", modeId.toString())
+
+
         return binding.root
     }
 
@@ -52,15 +57,11 @@ class CreateChangeFragment : Fragment() {
         val listNameMode = ArrayList<String>()
         viewModel.initDatabase()
 
-        viewModel.getAllModes().observe(viewLifecycleOwner) { listModes ->
-            allModesObs = listModes as ArrayList<ModeModel>
-            for (itemMode in allModesObs) listNameMode.add(itemMode.title)
-        }
-
-
         recyclerView = binding.rvAppsCreate
         adapter = AppAdapter()
         recyclerView.adapter = adapter
+
+        listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
 
         adapter.setList(listAppInstaled)   //viewModel.getInstaledApps()
 //        adapter.setList(viewModel.getInstaledApps())
@@ -120,5 +121,4 @@ class CreateChangeFragment : Fragment() {
             }else Toast.makeText(context, "Похожих приложений не найдено", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

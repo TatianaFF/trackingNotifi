@@ -5,14 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.APP
 import com.example.trackingnotifi.R
@@ -20,8 +25,11 @@ import com.example.trackingnotifi.adapters.ModeAdapter
 import com.example.trackingnotifi.databinding.ModesFragmentBinding
 import com.example.trackingnotifi.models.AppInstaledModel
 import com.example.trackingnotifi.models.ModeModel
+import com.example.trackingnotifi.screens.CreateChangeMode.CreateChangeFragment
 import com.example.trackingnotifi.service.NLService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.*
+import java.io.Serializable
 
 
 class ModesFragment() : Fragment() {
@@ -33,7 +41,9 @@ class ModesFragment() : Fragment() {
     val packAppsOnBlock = ArrayList<String>()
     var allModesObs = ArrayList<ModeModel>()
     lateinit var floatingButton: FloatingActionButton
-    var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
+    lateinit var listAppInstaled: ArrayList<AppInstaledModel>
+    lateinit var progress: ProgressBar
+    val TAG_APPS = "apps"
 
 
     override fun onCreateView(
@@ -50,7 +60,6 @@ class ModesFragment() : Fragment() {
     }
 
     private fun init(){
-
         val viewModel = ViewModelProvider(this).get(ModesViewModel::class.java)
         viewModel.initDatabase()
         recyclerView = binding.rvModes
@@ -61,6 +70,8 @@ class ModesFragment() : Fragment() {
             allModesObs = listModes as ArrayList<ModeModel>
             adapter.setList(listModes)
         }
+
+        progress = binding.progressBar
 
         adapter.onItemClick = { mode ->
             val intent = Intent(context, NLService::class.java)
@@ -95,16 +106,12 @@ class ModesFragment() : Fragment() {
             viewModel.updateMode(mode)
 //            for (itemMode in allModesObs) Log.e("MF_status", itemMode.status.toString())
         }
-//        listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
+
+
         floatingButton = binding.floatingActionButton
         floatingButton.setOnClickListener{
-            var timeout = System.currentTimeMillis()
-            listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
-            val bundle = Bundle()
-            bundle.putSerializable("apps", listAppInstaled)
-            APP.navController.navigate(R.id.createChangeFragment, bundle)
-            timeout = System.currentTimeMillis() - timeout
-            Log.e("timeout", timeout.toString())
+            progress.visibility = ProgressBar.VISIBLE
+            APP.navController.navigate(R.id.createChangeFragment)
         }
     }
 

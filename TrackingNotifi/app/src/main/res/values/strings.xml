@@ -19,4 +19,11 @@
     <string name="name_appCreate">name app</string>
     <string name="searchCreate">Search</string>
     <string name="create">Create</string>
+    <string name="update">Update</string>
+    <string name="delete_detail">Delete</string>
+    <string name="from">from</string>
+    <string name="message">message</string>
+    <string name="date">date</string>
+    <string name="list_modes">List modes</string>
+    <string name="blocked_notifi">Blocked notifi</string>
 </resources>
