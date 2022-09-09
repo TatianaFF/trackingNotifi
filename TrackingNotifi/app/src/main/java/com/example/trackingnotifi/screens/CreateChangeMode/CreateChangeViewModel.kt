@@ -58,9 +58,38 @@ class CreateChangeViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun deleteModeApp(modeAppModel: Mode_AppModel) =
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.deleteModeApp(modeAppModel)
+        }
+
     fun getAllModes(): LiveData<List<ModeModel>> {
         return REPOSITORY.allModes
     }
+
+    fun deleteApp(appModel: AppModel) =
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.deleteApp(appModel)
+        }
+
+    fun deleteMode(modeModel: ModeModel) =
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.deleteMode(modeModel)
+        }
+
+    fun getAppsByTitleMode(titleMode: String): LiveData<List<AppModel>> {
+        return REPOSITORY.getAppsByTitleMode(titleMode)
+    }
+
+    fun getAllModeAppByTitleMode(titleMode: String): LiveData<List<Mode_AppModel>> {
+        return REPOSITORY.getAllModeAppByTitleMode(titleMode)
+    }
+
+    fun updateMode(modeModel: ModeModel) =
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.updateMode(modeModel)
+        }
+
 
     @SuppressLint("QueryPermissionsNeeded", "WrongConstant")
     fun getInstaledApps(): MutableList<AppInstaledModel> {

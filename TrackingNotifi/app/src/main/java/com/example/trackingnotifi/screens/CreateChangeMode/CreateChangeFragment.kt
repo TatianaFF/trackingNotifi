@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.compose.ui.graphics.GraphicsLayerScope
@@ -21,16 +23,18 @@ import com.example.trackingnotifi.models.AppInstaledModel
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.Mode_AppModel
+import kotlinx.android.synthetic.main.create_change_fragment.*
 
 class CreateChangeFragment : Fragment() {
 
     lateinit var binding: CreateChangeFragmentBinding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: AppAdapter
-//    var allModesObs = ArrayList<ModeModel>()
     lateinit var listAppInstaled: ArrayList<AppInstaledModel>
-    val TAG_APPS = "apps"
-    var resultReq:String? = ""
+    var currentMode: ModeModel? = null
+    var listAppsByTitleMode = listOf<AppModel>()
+    lateinit var etTitleMode: EditText
+    var allModesObs = ArrayList<ModeModel>()
 
 
     override fun onCreateView(
@@ -41,7 +45,11 @@ class CreateChangeFragment : Fragment() {
 //        listAppInstaled = arguments?.getSerializable(TAG_APPS) as ArrayList<AppInstaledModel>
 //        listAppInstaled = arguments?.getParcelableArrayList<AppInstaledModel>("List") as ArrayList<AppInstaledModel>
 
+        currentMode = arguments?.let {
+            it.getSerializable("mode") as ModeModel
+        }
 
+        if (currentMode!=null) binding.btnDelete.visibility = Button.VISIBLE
 
         return binding.root
     }
@@ -55,50 +63,134 @@ class CreateChangeFragment : Fragment() {
         val viewModel = ViewModelProvider(this).get(CreateChangeViewModel::class.java)
         var listAppInstaledAdapter: List<AppInstaledModel>
         val listNameMode = ArrayList<String>()
+        val listPacksAppsByTitleMode = mutableListOf<String>()
         viewModel.initDatabase()
 
-        recyclerView = binding.rvAppsCreate
+
+
+        // почитать про obs
+        viewModel.getAllModes().observe(viewLifecycleOwner) { listModes ->
+            allModesObs = listModes as ArrayList<ModeModel>
+            for (itemMode in listModes){
+                Log.e("DF_", itemMode.title)
+                listNameMode.add(itemMode.title)
+            }
+        }
+
+        recyclerView = binding.rvApps
         adapter = AppAdapter()
         recyclerView.adapter = adapter
 
-        listAppInstaled = viewModel.getInstaledApps() as ArrayList<AppInstaledModel>
+        //packs app by title mode
+        currentMode?.let {
+            viewModel.getAppsByTitleMode(it.title).observe(viewLifecycleOwner) { listPackageAppByTitleMode ->
+                for (itemPackApp in listPackageAppByTitleMode) {
+                    listPacksAppsByTitleMode.add(itemPackApp.pack)
+                    Log.e("PackApp: ", itemPackApp.pack)
+                }
+    //            Log.e("AppPack: ", listAppsByTitleMode.size.toString())
+    //            for (itemPackApp in listAppsByTitleMode) Log.e("AppPack: ", itemPackApp.pack)
+            }
+        }
 
-        adapter.setList(listAppInstaled)   //viewModel.getInstaledApps()
-//        adapter.setList(viewModel.getInstaledApps())
-//        adapter.setListPack(listPackApps)
+        adapter.setList(viewModel.getInstaledApps())
+
+        //let
+        adapter.setListPack(listPacksAppsByTitleMode)
+
         //костыль, без прокрутки не выделяет checkbox (значения ischecked с list) у первых элементов
         recyclerView.scrollToPosition(10)
 
-        //слушатель на кнопку сохр
-        binding.btnSaveCreate.setOnClickListener{
-            //ADD MODE IN DB
-            val titleMode = binding.etTitleModeCreate.text.toString()
-            //проверка на уникальность имени
-            if (!listNameMode.contains(titleMode)){
-                viewModel.insertMode(ModeModel(title = titleMode))
+        etTitleMode = binding.etTitleMode
+        etTitleMode.setText(currentMode?.title)
 
-                //ADD APPS IN DB
-                //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
-                listAppInstaledAdapter = adapter.getList()
 
-                //формирование списка id приложений для сохранения в БД
-                for (itemApp in listAppInstaledAdapter){
-                    if (itemApp.ischecked){
-                        val pack = itemApp.pack
-                        //проверку на существование записи в БД по title
-                        //ADD APP
-                        viewModel.insertApp(AppModel(pack = pack))
+        binding.btnDelete.setOnClickListener{
+            currentMode?.let { it1 -> viewModel.deleteMode(it1) }
 
-                        //ADD MODE_APP IN DB
-                        viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
-                    }
+            for (itemApp in listAppsByTitleMode) viewModel.deleteApp(itemApp)
+
+            currentMode?.let { it1 ->
+                viewModel.getAllModeAppByTitleMode(it1.title).observe(viewLifecycleOwner) { listAllModeApp ->
+                    for (itemModeApp in listAllModeApp) viewModel.deleteModeApp(itemModeApp)
                 }
-                APP.navController.navigate(R.id.modesFragment)
-            } else Toast.makeText(context, "Такое название режима уже существует", Toast.LENGTH_SHORT).show()
+            }
+
+            APP.navController.navigate(R.id.modesFragment)
         }
 
-        binding.btnSearchCreate.setOnClickListener{
-            val txtSearch = binding.etTitleAppCreate.text.toString()
+        //слушатель на кнопку сохр
+        binding.btnSave.setOnClickListener{
+            //update
+            if (currentMode!=null){
+                val titleMode = binding.etTitleMode.text.toString()
+                var countEquals = 0
+                for (itemNameMode in listNameMode) if (itemNameMode == titleMode) countEquals++
+                if (!listNameMode.contains(titleMode) || titleMode == currentMode!!.title){
+                    Log.e("contains", "no")
+                    viewModel.getAllModeAppByTitleMode(currentMode!!.title).observe(viewLifecycleOwner) { listAllModeApp ->
+                        for (itemModeApp in listAllModeApp) viewModel.deleteModeApp(itemModeApp)
+                    }
+                    viewModel.getAppsByTitleMode(currentMode!!.title).observe(viewLifecycleOwner) { listAllApps ->
+                        for (itemApp in listAllApps) viewModel.deleteApp(itemApp)
+                    }
+
+                    viewModel.deleteMode(currentMode!!)
+
+                    viewModel.insertMode(ModeModel(title = titleMode))
+                    //
+
+                    //ADD APPS IN DB
+                    //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
+                    val listAppInstaledAdapter = adapter.getList()
+
+                    //формирование списка id приложений для сохранения в БД
+                    for (itemApp in listAppInstaledAdapter){
+                        if (itemApp.ischecked){
+                            val pack = itemApp.pack
+                            //проверку на существование записи в БД по title
+                            //ADD APP
+                            viewModel.insertApp(AppModel(pack = pack))
+
+                            //ADD MODE_APP IN DB
+                            viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+                        }
+                    }
+                    APP.navController.navigate(R.id.modesFragment)
+                } else Toast.makeText(context, "Такое название режима уже существует", Toast.LENGTH_SHORT).show()
+
+            }else{
+                //save
+                //ADD MODE IN DB
+                val titleMode = binding.etTitleMode.text.toString()
+                //проверка на уникальность имени
+                if (!listNameMode.contains(titleMode)){
+                    viewModel.insertMode(ModeModel(title = titleMode))
+
+                    //ADD APPS IN DB
+                    //получение списка с измененными состояниями cb сохранение в БД AppModel на сонове значений cb из AppInstaledModel
+                    listAppInstaledAdapter = adapter.getList()
+
+                    //формирование списка id приложений для сохранения в БД
+                    for (itemApp in listAppInstaledAdapter){
+                        if (itemApp.ischecked){
+                            val pack = itemApp.pack
+                            //проверку на существование записи в БД по title
+                            //ADD APP
+                            viewModel.insertApp(AppModel(pack = pack))
+
+                            //ADD MODE_APP IN DB
+                            viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
+                        }
+                    }
+                    APP.navController.navigate(R.id.modesFragment)
+                } else Toast.makeText(context, "Такое название режима уже существует", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        binding.btnSearch.setOnClickListener{
+            val txtSearch = binding.etTitleApp.text.toString()
             Log.e("app title", txtSearch)
 
             val listInstalledApps = adapter.getList()
@@ -122,3 +214,4 @@ class CreateChangeFragment : Fragment() {
         }
     }
 }
+

@@ -119,7 +119,7 @@ class ModesFragment() : Fragment() {
         fun clickMode(modeModel: ModeModel){
             val bundle = Bundle()
             bundle.putSerializable("mode", modeModel)
-            APP.navController.navigate(R.id.detailFragment, bundle)
+            APP.navController.navigate(R.id.createChangeFragment, bundle)
         }
     }
 }

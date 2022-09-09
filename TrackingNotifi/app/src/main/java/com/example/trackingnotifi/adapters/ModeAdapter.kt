@@ -15,7 +15,6 @@ import com.example.trackingnotifi.R
 import com.example.trackingnotifi.models.AppModel
 import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.screens.ListOfModes.ModesFragment
-import kotlinx.android.synthetic.main.detail_fragment.view.*
 import kotlinx.android.synthetic.main.item_mode_layout.view.*
 
 import android.app.Activity

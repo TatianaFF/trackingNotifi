@@ -26,4 +26,5 @@
     <string name="date">date</string>
     <string name="list_modes">List modes</string>
     <string name="blocked_notifi">Blocked notifi</string>
+    <string name="mode">Mode</string>
 </resources>

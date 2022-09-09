@@ -7,11 +7,11 @@
     tools:context=".screens.CreateChangeMode.CreateChangeFragment">
 
     <TextView
-        android:id="@+id/textViewCreate"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/addmode"
+        android:text="@string/mode"
         android:textColor="#673AB7"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -19,60 +19,80 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <EditText
-        android:id="@+id/et_titleModeCreate"
+        android:id="@+id/et_titleMode"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:hint="@string/title_mode"
-        app:layout_constraintBottom_toTopOf="@+id/btn_searchCreate"
+        app:layout_constraintBottom_toTopOf="@+id/et_titleApp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCreate" />
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
 
     <EditText
-        android:id="@+id/et_titleAppCreate"
+        android:id="@+id/et_titleApp"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:hint="@string/name_appCreate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_titleModeCreate" />
+        app:layout_constraintTop_toBottomOf="@id/et_titleMode" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_searchCreate"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnSearch"
+        android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/searchCreate"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@+id/rv_appsCreate"
-        app:layout_constraintStart_toEndOf="@+id/et_titleAppCreate" />
+        app:layout_constraintBottom_toTopOf="@id/rv_apps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/et_titleApp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_appsCreate"
+        android:id="@+id/rv_apps"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_searchCreate"
+        app:layout_constraintTop_toBottomOf="@id/et_titleApp"
         tools:listitem="@layout/item_app_layout" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_saveCreate"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnSave"
+        android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/save"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:text="Save"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toTopOf="@+id/btn_searchCreate"
-        app:layout_constraintStart_toEndOf="@+id/et_titleModeCreate" />
+        app:layout_constraintBottom_toTopOf="@+id/btnSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toEndOf="@+id/et_titleMode" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDelete"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/delete_detail"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rv_apps"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.92"
+        android:visibility="invisible"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
