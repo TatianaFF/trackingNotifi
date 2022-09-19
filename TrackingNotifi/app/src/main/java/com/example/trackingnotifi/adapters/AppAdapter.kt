@@ -1,9 +1,6 @@
 package com.example.trackingnotifi.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +10,10 @@ import com.example.trackingnotifi.models.AppInstaledModel
 import kotlinx.android.synthetic.main.item_app_layout.view.*
 
 
-class AppAdapter: RecyclerView.Adapter<AppAdapter.AppViewHolder>(
-) {
+class AppAdapter: RecyclerView.Adapter<AppAdapter.AppViewHolder>() {
+    var listInstaledApps = ArrayList<AppInstaledModel>()
+    var listPacks = ArrayList<String>()
 
-    var listInstaledApp = emptyList<AppInstaledModel>()
-    var listPacks = emptyList<String>()
-
-    //создание холдера
     class AppViewHolder(view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
@@ -33,62 +27,52 @@ class AppAdapter: RecyclerView.Adapter<AppAdapter.AppViewHolder>(
         val name_app = holder.itemView.name_app
         val app_icon = holder.itemView.app_icon
 
-        val appCurrent = listInstaledApp[position]
-        //если pack есть в БД cb = true
+        val appCurrent = listInstaledApps[position]
+
+        //если приложение есть в БД ischecked = true
         if (appCurrent.pack in listPacks){
             appCurrent.ischecked = true
         }
-        //установить флажок на cb
-        checkbox.setChecked(appCurrent.ischecked)
+
+        checkbox.isChecked = appCurrent.ischecked
         name_app.text = appCurrent.title
-
         app_icon.setImageDrawable(appCurrent.icon)
-//        app_icon.setImageDrawable(appCurrent.icon)
-
 
         // Tag is important to get position clicked checkbox
-        checkbox.setTag(position)
+        checkbox.tag = position
         checkbox.setOnClickListener(View.OnClickListener { v ->
             val currentPos = v.tag as Int
             var isChecked = false
             //если не отмечен, отметить
-            if (!listInstaledApp.get(currentPos).ischecked) {
+            if (!listInstaledApps[currentPos].ischecked) {
                 isChecked = true
             }
-            listInstaledApp.get(currentPos).ischecked = isChecked
+            listInstaledApps[currentPos].ischecked = isChecked
         })
 
     }
 
     override fun getItemCount(): Int {
-        return listInstaledApp.size
+        return listInstaledApps.size
     }
 
-    //изменять лист объектов извне и обновлять состояние UI
+    //присваивание и обновление списка установленных приложений
     @SuppressLint("NotifyDataSetChanged")
-    fun setList(list: List<AppInstaledModel>){
-        listInstaledApp = list
+    fun setListAppInstaled(list: ArrayList<AppInstaledModel>){
+        listInstaledApps = list
         notifyDataSetChanged()
     }
 
+    //присваивание и обновление списка пакетов приложений принадлежащих режиму
     @SuppressLint("NotifyDataSetChanged")
     @JvmName("setListPack1")
-    fun setListPack(list: List<String>){
+    fun setListPack(list: ArrayList<String>){
         listPacks = list
         notifyDataSetChanged()
     }
 
-    fun getList(): List<AppInstaledModel> {
-        return listInstaledApp
+    //возвращение измененного листа (состояния checkbox) установленных приложений
+    fun getChangedListInstaledApps(): List<AppInstaledModel> {
+        return listInstaledApps
     }
-
-    //при нажатии на приложение выделять cb
-    override fun onViewAttachedToWindow(holder: AppViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        holder.itemView.setOnClickListener {
-            //
-        }
-    }
-
-
 }

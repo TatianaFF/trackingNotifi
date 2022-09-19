@@ -1,7 +1,6 @@
 package com.example.trackingnotifi.models
 
 import android.graphics.drawable.Drawable
-import androidx.core.app.NotificationCompat
 import java.io.Serializable
 
 data class NotifiModelList(

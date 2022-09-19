@@ -7,86 +7,46 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.trackingnotifi.MainActivity
 import com.example.trackingnotifi.R
+import com.example.trackingnotifi.REPOSITORY
+import com.example.trackingnotifi.db.ModeDatabase
+import com.example.trackingnotifi.db.repository.RealizationRepDao
+import com.example.trackingnotifi.models.ModeModel
+import com.example.trackingnotifi.models.NotifiModel
 import com.example.trackingnotifi.models.NotifiModelList
+import com.example.trackingnotifi.screens.ListOfNotifi.NotifiFragment
+import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope.coroutineContext
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.coroutines.coroutineContext
 
 
 class NLService : NotificationListenerService() {
 
     private val TAG = this.javaClass.simpleName
-    var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
-    val packApps = ArrayList<String>()
-    val notifiList = ArrayList<NotifiModelList>()
+    private val BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
     private val CHANNEL_ID = "ForegroundService"
+    private val packAppsOnBlock = ArrayList<String>()
 
-    override fun onNotificationPosted(sbn: StatusBarNotification) {
-        Log.i(TAG, "onNotificationPosted")
-        Log.i(TAG, "ID: " + sbn.key + "t" + sbn.notification.tickerText + "t" + sbn.packageName)
 
-        Log.e("count_S", packApps.count().toString())
-        if (packApps.contains(sbn.packageName)) {
-            val pm: PackageManager = packageManager
-            val applicationInfo = pm.getApplicationInfo(sbn.packageName, 1)
-            val date = Date()
-            val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-            notifiList.add(NotifiModelList(
-                name_app = pm.getApplicationLabel(applicationInfo) as String,
-                icon = pm.getApplicationIcon(applicationInfo),
-                from = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String,
-                message = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
-                date = formatter.format(date),
-                pack = sbn.packageName
-            ))
-            Log.e("notifiList_cou", notifiList.count().toString())
-            cancelNotification(sbn.key)
+    private fun insertNotifi(notifi: NotifiModel) {
+        GlobalScope.launch(Dispatchers.IO) {
+            REPOSITORY.insertNotifi(notifi)
         }
-    }
-
-    val NLServiceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
-
-        override fun onReceive(context: Context, intent: Intent) {
-
-            val stopIntent = intent.getStringExtra("stop_MF")
-            if (stopIntent!=null) {
-                Log.e("STOP_S", stopIntent.toString())
-//                stopService(Intent(context, NLService::class.java))
-//                stopSelf()
-                stopForeground(true)
-                packApps.clear()
-                notifiList.clear()
-            }
-
-            val getNotifi = intent.getStringExtra("getNotifi")
-            if (getNotifi!=null) {
-                Log.e("getNotifi", "")
-                val i = Intent(BROADCAST_NAME_ACTION)
-                Log.e("notifiList_count", notifiList.count().toString())
-                i.putExtra("push_notifi", notifiList as Serializable)
-                LocalBroadcastManager.getInstance(context).sendBroadcast(i)
-            }
-        }
-
-    }
-
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return super.onBind(intent)
     }
 
     @Override
@@ -96,27 +56,51 @@ class NLService : NotificationListenerService() {
         val filter = IntentFilter(BROADCAST_NAME_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(NLServiceReceiver, filter)
 
-        val i = Intent(BROADCAST_NAME_ACTION)
-        i.putExtra("onCr", "eeeOnCr")
-        this.sendBroadcast(i)
+    }
 
-        Toast.makeText(this, "enable service", Toast.LENGTH_SHORT).show()
-        Log.e("service ", "enabled")
+    override fun onNotificationPosted(sbn: StatusBarNotification) {
+
+        Log.i(TAG, "onNotificationPosted")
+        Log.i(TAG, "ID: " + sbn.key + "t" + sbn.notification.tickerText + "t" + sbn.packageName)
+
+
+        if (packAppsOnBlock.contains(sbn.packageName)) {
+            cancelNotification(sbn.key)
+
+            val date = Date()
+            val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
+            insertNotifi(
+                NotifiModel(
+                    pack = sbn.packageName,
+                    from = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String,
+                    date = formatter.format(date),
+                    message = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
+            ))
+        }
+    }
+
+    private val NLServiceReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val stopIntent = intent.getStringExtra("onStopService")
+
+            if (stopIntent!=null) {
+                //остановка сервиса
+                Log.e(TAG, "stopserv")
+                stopForeground(true)
+                //очищение листа с именами пакетов на блокировку
+                packAppsOnBlock.clear()
+            }
+        }
     }
 
     @SuppressLint("WrongConstant")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(this, "start service", Toast.LENGTH_SHORT).show()
-        Log.e("start", "service")
+        Log.e(TAG, "onStartCommand")
 
-        val intentStart = intent?.getStringArrayListExtra("onStartCommand")
-        for (itemPack in intentStart!!) {
-            packApps.add(itemPack)
-
-            Log.e("pack", itemPack)
-            Log.e("packApps", packApps.count().toString())
-        }
-//        startForegroundService(intent)
+        //получение списка пакетов приложений на блокировку
+        val intentStartListPackOnBlock = intent?.getStringArrayListExtra("onStartService")
+        intentStartListPackOnBlock?.forEach { packAppsOnBlock.add(it) }
+        Log.e(TAG, "packAppsOnBlock ${packAppsOnBlock.size.toString()}")
 
         createNotificationChannel()
         val notificationIntent = Intent(this, MainActivity::class.java)
@@ -126,33 +110,33 @@ class NLService : NotificationListenerService() {
         )
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Foreground Service")
-            .setContentText("Application blocking service")
+            .setContentText("The app blocks notifications")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)
+        //без этого должно работать
         startForegroundService(notificationIntent)
-        //stopSelf()
+
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun startForegroundService(service: Intent?): ComponentName? {
-        Log.e("start", "FORservice")
-
+        Log.e(TAG, "startForegroundService")
 
         return super.startForegroundService(service)
     }
 
     @Override
     override fun stopService(name: Intent?): Boolean {
-        Log.e("stop", "service")
+        Log.e(TAG, "stopService")
 
         return super.stopService(name)
     }
 
     @Override
     override fun onDestroy() {
-        Log.e("service ", "disabled")
+        Log.e(TAG, "onDestroy")
         LocalBroadcastManager.getInstance(this).unregisterReceiver(NLServiceReceiver)
     }
 

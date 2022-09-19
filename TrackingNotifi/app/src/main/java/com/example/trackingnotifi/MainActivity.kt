@@ -1,6 +1,7 @@
 package com.example.trackingnotifi
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.*
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -20,6 +21,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.trackingnotifi.db.ModeDatabase
+import com.example.trackingnotifi.db.repository.RealizationRepDao
 import com.example.trackingnotifi.models.AppInstaledModel
 import com.example.trackingnotifi.service.NLService
 import java.lang.Exception
@@ -29,11 +32,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     val context = application
-//    var listAppInstaled: ArrayList<AppInstaledModel> = arrayListOf()
 
 
-
-    //Экран создается с помощью биндингов
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -47,14 +47,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         APP = this
+
         navController = Navigation.findNavController(this, R.id.nav_fragment)
-
-//        Log.e("NOTIFIFR_count_allNotifi", mService.getNotifi.count().toString())
-
-
-//        val bundle = Bundle()
-//        listAppInstaled = getInstaledApps() as ArrayList<AppInstaledModel>
-//        bundle.putSerializable("apps", listAppInstaled)
 
         binding.navView.setOnItemSelectedListener {
             when(it.itemId){

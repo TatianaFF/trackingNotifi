@@ -11,7 +11,6 @@ import com.example.trackingnotifi.models.NotifiModel
 interface IDao {
 
     //Mode
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMode(modeModel: ModeModel)
 
@@ -25,7 +24,6 @@ interface IDao {
     fun getAllModes(): LiveData<List<ModeModel>>
 
     //App
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertApp(appModel: AppModel)
 
@@ -39,7 +37,6 @@ interface IDao {
     fun getAppsByTitleMode(titleMode: String): LiveData<List<AppModel>>
 
     //Mode_App
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertModeApp(modeAppModel: Mode_AppModel)
 
@@ -53,7 +50,6 @@ interface IDao {
     fun getAllModeAppByTitleMode(titleMode: String): LiveData<List<Mode_AppModel>>
 
     //Notifi
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNotifi(notifi: NotifiModel)
 

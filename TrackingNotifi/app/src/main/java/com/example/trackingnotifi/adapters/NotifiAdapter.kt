@@ -2,25 +2,20 @@ package com.example.trackingnotifi.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.R
 import com.example.trackingnotifi.models.NotifiModelList
-import com.example.trackingnotifi.screens.ListOfNotifi.NotifiFragment
-import kotlinx.android.synthetic.main.item_app_layout.view.*
 import kotlinx.android.synthetic.main.item_notifi_layout.view.*
 
 
 class NotifiAdapter: RecyclerView.Adapter<NotifiAdapter.NotifiViewHolder> (){
 
-    var listNotifiAd = emptyList<NotifiModelList>()
+    var listNotifi = ArrayList<NotifiModelList>()
     lateinit var contextAd: Context
 
-    //создание холдера
     class NotifiViewHolder(view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotifiViewHolder {
@@ -35,24 +30,25 @@ class NotifiAdapter: RecyclerView.Adapter<NotifiAdapter.NotifiViewHolder> (){
         val message = holder.itemView.message
         val date = holder.itemView.date
 
-        val notifiCurrent = listNotifiAd[position]
+        val notifiCurrent = listNotifi[position]
 
         name_app.text = notifiCurrent.name_app
         app_icon.setImageDrawable(notifiCurrent.icon)
         from.text = notifiCurrent.from
         message.text = notifiCurrent.message
         date.text = notifiCurrent.date
-        Log.e("adapter", message.toString())
     }
 
     override fun getItemCount(): Int {
-        return listNotifiAd.size
+        return listNotifi.size
     }
 
-    fun setList(listNotifi: List<NotifiModelList>){
-        listNotifiAd = listNotifi
+    @JvmName("setListNotifi1")
+    fun setListNotifi(listNotifi: ArrayList<NotifiModelList>){
+        this.listNotifi = listNotifi
         notifyDataSetChanged()
     }
+
     fun setContext(context: Context){
         contextAd = context
         notifyDataSetChanged()
@@ -62,9 +58,8 @@ class NotifiAdapter: RecyclerView.Adapter<NotifiAdapter.NotifiViewHolder> (){
     override fun onViewAttachedToWindow(holder: NotifiViewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.itemView.setOnClickListener {
-            val launchIntent: Intent? = contextAd.packageManager.getLaunchIntentForPackage(listNotifiAd[holder.adapterPosition].pack)
-            contextAd.startActivity(launchIntent);//null pointer check in case package name was not found
-//            NotifiFragment.clickNotifi(listNotifiAd[holder.adapterPosition])
+            val launchIntent: Intent? = contextAd.packageManager.getLaunchIntentForPackage(listNotifi[holder.adapterPosition].pack)
+            contextAd.startActivity(launchIntent)
         }
     }
 }

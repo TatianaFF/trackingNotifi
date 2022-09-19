@@ -13,7 +13,6 @@ import com.example.trackingnotifi.models.NotifiModel
 class RealizationRepDao(private val iDao:IDao): IRepository {
 
     //Mode
-
     override val allModes: LiveData<List<ModeModel>>
         get() = iDao.getAllModes()
 
@@ -30,7 +29,6 @@ class RealizationRepDao(private val iDao:IDao): IRepository {
     }
 
     //App
-
     override val allApps: LiveData<List<AppModel>>
         get() = iDao.getAllApps()
 
@@ -47,7 +45,6 @@ class RealizationRepDao(private val iDao:IDao): IRepository {
     }
 
     //Mode_App
-
     override val allModeApp: LiveData<List<Mode_AppModel>>
         get() = iDao.getAllModeApp()
 
@@ -64,7 +61,6 @@ class RealizationRepDao(private val iDao:IDao): IRepository {
     }
 
     //NotifiModel
-
     override val allNotifi: LiveData<List<NotifiModel>>
         get() = iDao.getAllNotifi()
 
