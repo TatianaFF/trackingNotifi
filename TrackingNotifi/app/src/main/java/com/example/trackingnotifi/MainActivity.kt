@@ -28,10 +28,9 @@ import com.example.trackingnotifi.service.NLService
 import java.lang.Exception
 import java.util.ArrayList
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
-    val context = application
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

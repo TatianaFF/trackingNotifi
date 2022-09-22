@@ -28,4 +28,5 @@
     <string name="blocked_notifi">Blocked notifi</string>
     <string name="mode">Mode</string>
     <string name="clear_notifications">Clear notifications</string>
+    <string name="count_notifications">Count notifications:</string>
 </resources>

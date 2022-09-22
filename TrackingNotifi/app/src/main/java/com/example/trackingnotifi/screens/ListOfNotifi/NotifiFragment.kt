@@ -1,24 +1,21 @@
 package com.example.trackingnotifi.screens.ListOfNotifi
 
-import android.content.*
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.adapters.NotifiAdapter
 import com.example.trackingnotifi.databinding.NotifiFragmentBinding
 import com.example.trackingnotifi.models.NotifiModel
 import com.example.trackingnotifi.models.NotifiModelList
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import android.graphics.Color
+import android.widget.Toast
 
 
 class NotifiFragment : Fragment() {
@@ -26,10 +23,10 @@ class NotifiFragment : Fragment() {
     private val TAG = this.javaClass.simpleName
     private lateinit var binding: NotifiFragmentBinding
     private lateinit var btnClearNotifi: Button
+    private lateinit var tvCountNotifi: TextView
     private var allNotifi = ArrayList<NotifiModelList>()
     private lateinit var recyclerView: RecyclerView
     private var adapter: NotifiAdapter = NotifiAdapter()
-    private var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
     private var notifiListDB = ArrayList<NotifiModel>()
     private var notifiListRV = ArrayList<NotifiModelList>()
 
@@ -39,11 +36,9 @@ class NotifiFragment : Fragment() {
     ): View? {
         binding = NotifiFragmentBinding.inflate(layoutInflater, container, false)
 
-//        val filter = IntentFilter(BROADCAST_NAME_ACTION)
-//        LocalBroadcastManager.getInstance(activity!!.applicationContext).registerReceiver(valBroadcastReceiver, filter)
-
         btnClearNotifi = binding.btnClearNotifi
         recyclerView = binding.rvNotifi
+        tvCountNotifi = binding.tvCount
         recyclerView.adapter = adapter
         adapter.setContext(requireActivity())
 
@@ -63,34 +58,23 @@ class NotifiFragment : Fragment() {
         viewModel.getAllNotifi().observe(viewLifecycleOwner){ listAllNotifi ->
             notifiListDB = listAllNotifi as ArrayList<NotifiModel>
             notifiListRV = viewModel.notifiDBListTONotifiRVList(notifiListDB)
+            notifiListRV.reverse()
             adapter.setListNotifi(notifiListRV)
+            tvCountNotifi.text = "${notifiListDB.size}/500"
             Log.e(TAG, listAllNotifi.size.toString())
+
+            if (listAllNotifi.size >= 5){
+                tvCountNotifi.setTextColor(Color.parseColor("#FF0000"))
+                Toast.makeText(context, "Превышено максимальное количество уведомлений (5), уведомления не будут сохранятся", Toast.LENGTH_SHORT).show()
+            }
         }
 
         btnClearNotifi.setOnClickListener{
             notifiListDB.forEach { viewModel.deleteNotifi(it) }
             notifiListRV.clear()
             adapter.setListNotifi(notifiListRV)
+            tvCountNotifi.setTextColor(Color.parseColor("#FFFFFF"))
         }
-    }
-
-//    private val valBroadcastReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(contxt: Context?, intent: Intent?) {
-//            //получение заблокированных уведомлений из сервиса
-////            val intentNotifiService = intent?.getStringArrayListExtra("pushNotifi") as? ArrayList<NotifiModelList>
-////
-////            intentNotifiService?.let {
-////                allNotifi = intentNotifiService
-////                adapter.setListNotifi(allNotifi)
-////                adapter.setContext(requireActivity())
-////            }
-//        }
-//    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-//        LocalBroadcastManager.getInstance(activity!!.applicationContext).unregisterReceiver(valBroadcastReceiver)
     }
 
 }

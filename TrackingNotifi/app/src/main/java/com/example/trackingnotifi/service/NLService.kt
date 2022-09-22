@@ -7,7 +7,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -16,6 +18,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.trackingnotifi.MainActivity
 import com.example.trackingnotifi.R
@@ -26,11 +29,13 @@ import com.example.trackingnotifi.models.ModeModel
 import com.example.trackingnotifi.models.NotifiModel
 import com.example.trackingnotifi.models.NotifiModelList
 import com.example.trackingnotifi.screens.ListOfNotifi.NotifiFragment
+import com.example.trackingnotifi.screens.ListOfNotifi.NotifiViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.GlobalScope.coroutineContext
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Observer
 import kotlin.collections.ArrayList
 import kotlin.coroutines.coroutineContext
 
@@ -41,6 +46,7 @@ class NLService : NotificationListenerService() {
     private val BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
     private val CHANNEL_ID = "ForegroundService"
     private val packAppsOnBlock = ArrayList<String>()
+    private var countNotifi: Int = 0
 
 
     private fun insertNotifi(notifi: NotifiModel) {
@@ -65,17 +71,23 @@ class NLService : NotificationListenerService() {
 
 
         if (packAppsOnBlock.contains(sbn.packageName)) {
+
             cancelNotification(sbn.key)
+            countNotifi++
 
             val date = Date()
             val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-            insertNotifi(
-                NotifiModel(
-                    pack = sbn.packageName,
-                    from = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String,
-                    date = formatter.format(date),
-                    message = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
-            ))
+
+            //проверка на кол во уведомлений
+            if (countNotifi <= 5){
+                insertNotifi(
+                    NotifiModel(
+                        pack = sbn.packageName,
+                        from = sbn.notification.extras.getCharSequence(Notification.EXTRA_TITLE) as String,
+                        date = formatter.format(date),
+                        message = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
+                    ))
+            }else Toast.makeText(this, "Превышено максимальное количество уведомлений (5), уведомления не будут сохранятся", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -111,7 +123,7 @@ class NLService : NotificationListenerService() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Foreground Service")
             .setContentText("The app blocks notifications")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_notifications_black_24dp)
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)
@@ -130,6 +142,7 @@ class NLService : NotificationListenerService() {
     @Override
     override fun stopService(name: Intent?): Boolean {
         Log.e(TAG, "stopService")
+        countNotifi = 0
 
         return super.stopService(name)
     }

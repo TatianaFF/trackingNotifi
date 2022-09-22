@@ -1,5 +1,6 @@
 package com.example.trackingnotifi.screens.CreateChangeMode
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trackingnotifi.APP
 import com.example.trackingnotifi.R
@@ -39,6 +41,7 @@ class CreateChangeFragment : Fragment() {
     private var listNamesMode = ArrayList<String>()
     private var listPacksAppsByTitleMode = ArrayList<String>()
     private var listModeAppByTitleMode = ArrayList<Mode_AppModel>()
+    private var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
 
 
     override fun onCreateView(
@@ -137,17 +140,6 @@ class CreateChangeFragment : Fragment() {
                     //сохранение связи режим_приложение в БД
                     viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
                 } }
-                for (itemApp in listAppChangedAdapter){
-                    if (itemApp.ischecked){
-                        val pack = itemApp.pack
-                        //проверку на существование записи в БД по title
-                        //ADD APP
-                        viewModel.insertApp(AppModel(pack = pack))
-
-                        //ADD MODE_APP IN DB
-                        viewModel.insertModeApp(Mode_AppModel(title_mode = titleMode, pack_app = pack))
-                    }
-                }
                 APP.navController.navigate(R.id.modesFragment)
             } else printMessageNotUnique()
         }
@@ -192,6 +184,9 @@ class CreateChangeFragment : Fragment() {
             //удаление связей режим_приложение
             listModeAppByTitleMode.forEach{ viewModel.deleteModeApp(it) }
 
+            //если нет режимов остановить сервис
+            stopServ()
+
             APP.navController.navigate(R.id.modesFragment)
         }
 
@@ -229,6 +224,12 @@ class CreateChangeFragment : Fragment() {
                 APP.navController.navigate(R.id.modesFragment)
             } else printMessageNotUnique()
         }
+    }
+
+    private fun stopServ(){
+        val intent1 = Intent(BROADCAST_NAME_ACTION)
+        intent1.putExtra("onStopService", "onStopService")
+        LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent1)
     }
 
     private fun printMessageNotUnique(){
