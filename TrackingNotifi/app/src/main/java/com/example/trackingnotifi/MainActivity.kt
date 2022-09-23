@@ -58,7 +58,7 @@ class MainActivity: AppCompatActivity() {
                     navController.navigate(R.id.modesFragment)
                 }
                 R.id.navigation_settings -> {
-//                    navController.navigate(R.id.createChangeFragment, bundle)
+                    navController.navigate(R.id.settingsFragment)
                 }
             }
             true

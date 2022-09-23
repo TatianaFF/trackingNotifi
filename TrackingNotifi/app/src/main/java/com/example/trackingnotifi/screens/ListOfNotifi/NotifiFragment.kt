@@ -24,7 +24,6 @@ class NotifiFragment : Fragment() {
     private lateinit var binding: NotifiFragmentBinding
     private lateinit var btnClearNotifi: Button
     private lateinit var tvCountNotifi: TextView
-    private var allNotifi = ArrayList<NotifiModelList>()
     private lateinit var recyclerView: RecyclerView
     private var adapter: NotifiAdapter = NotifiAdapter()
     private var notifiListDB = ArrayList<NotifiModel>()

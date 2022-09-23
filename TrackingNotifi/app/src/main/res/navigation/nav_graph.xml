@@ -39,12 +39,8 @@
 <!--            app:destination="@id/modesFragment" />-->
     </fragment>
     <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.example.trackingnotifi.screens.DetailFragment.DetailFragment"
-        android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" >
-<!--        <action-->
-<!--            android:id="@+id/action_detailFragment_to_modesFragment"-->
-<!--            app:destination="@id/modesFragment" />-->
-    </fragment>
+        android:id="@+id/settingsFragment"
+        android:name="com.example.trackingnotifi.screens.Settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>
