@@ -87,7 +87,7 @@ class NLService : NotificationListenerService() {
                         date = formatter.format(date),
                         message = sbn.notification.extras.getCharSequence(Notification.EXTRA_TEXT) as String,
                     ))
-            }else Toast.makeText(this, "Превышено максимальное количество уведомлений (5), уведомления не будут сохранятся", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -102,6 +102,9 @@ class NLService : NotificationListenerService() {
                 //очищение листа с именами пакетов на блокировку
                 packAppsOnBlock.clear()
             }
+
+            val clearIntent = intent.getStringExtra("onClearCountNotifi")
+            if (clearIntent!=null) countNotifi = 0
         }
     }
 

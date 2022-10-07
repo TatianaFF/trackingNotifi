@@ -89,10 +89,11 @@ class CreateChangeFragment : Fragment() {
         //получение установленных приложений
         val listInstalledApps = viewModel.getInstaledApps()
 
-        //отправление адаптеру приложений установленных на телефоне
+        //отправление адаптеру приложений установленных на телефон
         adapter.setListAppInstaled(listInstalledApps as ArrayList<AppInstaledModel>)
 
 
+        //поиск
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -103,11 +104,11 @@ class CreateChangeFragment : Fragment() {
                 val editTextLower = editText.lowercase()
 
                 //лист с названиями приложений в которых содержится строка txtSearch
-//                val result = listTitleAppsLower.filter { it.contains(editTextLower) }
                 val resultListSearch = listInstalledApps.filter { it.title.lowercase().contains(editTextLower) } as ArrayList<AppInstaledModel>
 
                 if (resultListSearch.isEmpty()) Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
 
+                //отправить адаптеру список с учетом старых отметок checkbox
                 adapter.setListAppInstaled(resultListSearch)
 
             }
@@ -122,6 +123,9 @@ class CreateChangeFragment : Fragment() {
         btnDelete.visibility = Button.INVISIBLE
 
         btnSave.setOnClickListener{
+            Log.e(TAG, "save create")
+            etTitleAppSearch.text.clear()
+
             val titleMode = etTitleMode.text.toString()
             //проверка имени на уникальность
             if (!listNamesMode.contains(titleMode)){
@@ -130,8 +134,12 @@ class CreateChangeFragment : Fragment() {
 
                 //получение списка с измененными состояниями checkbox
                 listAppChangedAdapter = adapter.getChangedListInstaledApps() as ArrayList<AppInstaledModel>
+//                Log.e(TAG, listAppChangedAdapter.size.toString())
+//                listAppChangedAdapter.forEach { Log.e(TAG, it.pack) }
 
                 listAppChangedAdapter.forEach{ if (it.ischecked){
+                    Log.e(TAG, it.title)
+
                     val pack = it.pack
 
                     //сохранение приложения в БД
@@ -191,6 +199,9 @@ class CreateChangeFragment : Fragment() {
         }
 
         btnSave.setOnClickListener{
+            Log.e(TAG, "save detail")
+            etTitleAppSearch.text.clear()
+
             val titleMode = etTitleMode.text.toString()
 
             //проверка названия режима на уникальность
@@ -229,7 +240,8 @@ class CreateChangeFragment : Fragment() {
     private fun stopServ(){
         val intent1 = Intent(BROADCAST_NAME_ACTION)
         intent1.putExtra("onStopService", "onStopService")
-        LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent1)
+//        LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent1)
+        LocalBroadcastManager.getInstance(requireActivity().applicationContext).sendBroadcast(intent1)
     }
 
     private fun printMessageNotUnique(){

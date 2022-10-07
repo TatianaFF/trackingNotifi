@@ -27,6 +27,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/count_notifications"
         android:textAllCaps="false"
+        android:textColor="#FF000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -37,6 +38,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:text="/500"
+        android:textColor="#FF000000"
         app:layout_constraintStart_toEndOf="@+id/tv_count_text"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 

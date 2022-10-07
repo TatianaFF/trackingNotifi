@@ -1,5 +1,7 @@
 package com.example.trackingnotifi.screens.ListOfNotifi
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +18,7 @@ import com.example.trackingnotifi.models.NotifiModel
 import com.example.trackingnotifi.models.NotifiModelList
 import android.graphics.Color
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 
 class NotifiFragment : Fragment() {
@@ -28,6 +31,7 @@ class NotifiFragment : Fragment() {
     private var adapter: NotifiAdapter = NotifiAdapter()
     private var notifiListDB = ArrayList<NotifiModel>()
     private var notifiListRV = ArrayList<NotifiModelList>()
+    private var BROADCAST_NAME_ACTION = "com.example.trackingnotifi.NOTIFICATION_LISTENER_SERVICE"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +55,7 @@ class NotifiFragment : Fragment() {
         init()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun init(){
         val viewModel = ViewModelProvider(this)[NotifiViewModel::class.java]
 
@@ -59,7 +64,7 @@ class NotifiFragment : Fragment() {
             notifiListRV = viewModel.notifiDBListTONotifiRVList(notifiListDB)
             notifiListRV.reverse()
             adapter.setListNotifi(notifiListRV)
-            tvCountNotifi.text = "${notifiListDB.size}/500"
+            tvCountNotifi.text = "${notifiListDB.size}/5"
             Log.e(TAG, listAllNotifi.size.toString())
 
             if (listAllNotifi.size >= 5){
@@ -72,7 +77,12 @@ class NotifiFragment : Fragment() {
             notifiListDB.forEach { viewModel.deleteNotifi(it) }
             notifiListRV.clear()
             adapter.setListNotifi(notifiListRV)
-            tvCountNotifi.setTextColor(Color.parseColor("#FFFFFF"))
+            tvCountNotifi.setTextColor(Color.parseColor("#FF000000"))
+
+            //отправить инфу в сервис что уведомления очищены и можно сохранять новые
+            val intent = Intent(BROADCAST_NAME_ACTION)
+            intent.putExtra("onClearCountNotifi", "onClearCountNotifi")
+            LocalBroadcastManager.getInstance(activity!!.applicationContext).sendBroadcast(intent)
         }
     }
 
